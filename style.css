@@ -1,0 +1,46 @@
+:root {
+    --black-border: 2px solid black;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#header {
+    text-align: center;
+}
+
+#main-content {
+    display: flex;
+    justify-content: center;
+}
+
+.board-container {
+    width: 50vmin;
+    height: 50vmin;
+    border: none;
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.board {
+    height: calc(50vmin/3);
+    width: calc(50vmin/3);
+    font-size: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vert {
+    border-right: var(--black-border);
+    border-left: var(--black-border);
+}
+
+.hori {
+    border-top: var(--black-border);
+    border-bottom: var(--black-border);
+}

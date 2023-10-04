@@ -38,12 +38,17 @@ const GameBoard = (() => {
         console.log(boardWithCellValues);
     }
 
-    
+    const resetBoard = () => {
+        board.forEach(row => {
+            row.forEach(cell => {cell.addMarker(0)});
+        });
+    }
     
     return {
         getBoard,
         playersMove,
-        printBoard
+        printBoard,
+        resetBoard
     }
 })();
 
@@ -102,6 +107,10 @@ const GameController = (() => {
         console.log(`${activePlayers.name}'s turn`);
     }
 
+    const resetPlayer = () => {
+        players[0].filledCell = [];
+        players[1].filledCell = [];
+    }
 
     const playRound = (number) => {
         console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
@@ -132,11 +141,15 @@ const GameController = (() => {
 
         if(checkWin()){
             console.log(`Congratulations ${getActivePlayers().name} Win!`);
+            board.resetBoard();
+            resetPlayer();
             return
         }
 
         if(isBoardFull()){
             console.log(`It's a draw`);
+            board.resetBoard();
+            resetPlayer();
             return
         }
         switchActivePlayers();

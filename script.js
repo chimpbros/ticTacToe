@@ -81,11 +81,13 @@ const GameController = (() => {
     const players = [
         {
             name: playernOneName,
-            marker: 1
+            marker: 1,
+            filledCell: []
         },
         {
             name: playerTwoName,
-            marker: 2
+            marker: 2,
+            filledCell: []
         }
     ];
 
@@ -100,10 +102,43 @@ const GameController = (() => {
         console.log(`${activePlayers.name}'s turn`);
     }
 
+
     const playRound = (number) => {
         console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
 
         board.playersMove(number, getActivePlayers().marker);
+        getActivePlayers().filledCell.push(number);
+        // check for winner goes here
+        const checkWin = () => {
+            const winCondition = [
+                [1,2,3],
+                [4,5,6],
+                [7,8,9],
+                [1,4,7],
+                [2,5,8],
+                [3,6,9],
+                [1,5,9],
+                [3,5,7]
+            ];
+
+            return winCondition.some((combination) => 
+            combination.every((index) => getActivePlayers().filledCell.includes(index))
+            );
+        }
+
+        const isBoardFull = () => {
+            return board.getBoard().every((row) => row.every((cell) => cell.getValue() !== 0));
+        };
+
+        if(checkWin()){
+            console.log(`Congratulations ${getActivePlayers().name} Win!`);
+            return
+        }
+
+        if(isBoardFull()){
+            console.log(`It's a draw`);
+            return
+        }
         switchActivePlayers();
         printNewRound();
     }

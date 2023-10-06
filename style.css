@@ -39,6 +39,10 @@
     font-size: 5rem;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
     border: var(--black-border);
+}
+
+.invisible {
+    display: none;
 }

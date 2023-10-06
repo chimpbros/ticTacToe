@@ -178,6 +178,10 @@ const ScreenController = () => {
     const game = GameController;
     const infoDiv = document.querySelector('#info');
     const boardDiv = document.querySelector('#board-container');
+    const startButton = document.querySelector('#start');
+    const initButton = document.querySelector('#btn-container');
+    boardDiv.style.display = 'none';
+
 
     const updateScreen = () => {
         boardDiv.textContent = '';
@@ -197,6 +201,11 @@ const ScreenController = () => {
                 boardDiv.appendChild(cellButton);
             })
         });
+
+        if(!initButton.classList.contains('invisible')){
+            initButton.classList.toggle('invisible');
+            boardDiv.style.display = 'grid';
+        }
     }
 
     const clickHandlerBoard = (e) => {
@@ -207,8 +216,12 @@ const ScreenController = () => {
         updateScreen();
     }
 
-    updateScreen();
+
+    startButton.addEventListener('click', updateScreen);
     boardDiv.addEventListener('click', clickHandlerBoard);
 };
 
-ScreenController()
+ScreenController();
+
+
+

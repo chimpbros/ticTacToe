@@ -21,11 +21,18 @@ const GameBoard = (() => {
             cellNumberArray[cellNumberIndex] = {};
             cellNumberArray[cellNumberIndex].number = cellNumberIndex + 1;
             cellNumberArray[cellNumberIndex].cell = board[i][j];
+            cellNumberArray[cellNumberIndex].index = [i, j];
             
             cellNumberIndex++;
         }
     }
-    console.log(cellNumberArray)
+    
+    const getCellNumber = (indexRows, indexColumn) => {
+        const number = cellNumberArray.filter(item => {
+            return item.index.toString() === [indexRows,indexColumn].toString()
+        })[0].number;
+        return number;
+    }
 
     const playersMove = (number, player) => {
         const cell = cellNumberArray.filter((item) => item.number === number)[0].cell;
@@ -48,7 +55,8 @@ const GameBoard = (() => {
         getBoard,
         playersMove,
         printBoard,
-        resetBoard
+        resetBoard,
+        getCellNumber
     }
 })();
 
@@ -160,13 +168,47 @@ const GameController = (() => {
 
     return {
         playRound,
-        getActivePlayers
+        getActivePlayers,
+        getBoard: board.getBoard,
+        getCellNumber: board.getCellNumber
     }
 })();
 
-const game = GameController;
+const ScreenController = () => {
+    const game = GameController;
+    const infoDiv = document.querySelector('#info');
+    const boardDiv = document.querySelector('#board-container');
 
-const startBtn = document.querySelector('#start');
-startBtn.addEventListener('click', () => {
-    // Game.start()
-})
+    const updateScreen = () => {
+        boardDiv.textContent = '';
+
+        const board = game.getBoard();
+        const activePlayersName = game.getActivePlayers().name;
+
+        infoDiv.textContent = `${activePlayersName}'s turn...`;
+
+        board.forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
+                const cellButton = document.createElement('button');
+                cellButton.classList.add('cell');
+
+                cellButton.dataset.number = game.getCellNumber(rowIndex, columnIndex);
+                cellButton.textContent = cell.getValue();
+                boardDiv.appendChild(cellButton);
+            })
+        });
+    }
+
+    const clickHandlerBoard = (e) => {
+        const selectedCell = e.target.dataset.number;
+        if(!selectedCell) return;
+
+        game.playRound(parseInt(selectedCell));
+        updateScreen();
+    }
+
+    updateScreen();
+    boardDiv.addEventListener('click', clickHandlerBoard);
+};
+
+ScreenController()

@@ -89,6 +89,7 @@ const Player = (name, marker) => {
 const GameController = (() => {
     let playernOneName = 'player one';
     let playerTwoName = 'player two';
+    let winner;
     const board = GameBoard;
 
     const players = [
@@ -148,6 +149,7 @@ const GameController = (() => {
         };
 
         if(checkWin()){
+            winner = getActivePlayers().name;
             console.log(`Congratulations ${getActivePlayers().name} Win!`);
             board.resetBoard();
             resetPlayer();
@@ -179,8 +181,11 @@ const ScreenController = () => {
     const infoDiv = document.querySelector('#info');
     const boardDiv = document.querySelector('#board-container');
     const startButton = document.querySelector('#start');
-    const initButton = document.querySelector('#btn-container');
-    boardDiv.style.display = 'none';
+    const startScreen = document.querySelector('#start-screen');
+    const roundInfo = document.querySelector('#round-info');
+    const scoreCtn = document.querySelector('.score-container');
+    const mainScreen = document.querySelector('#main-screen');
+    const quitButton = document.querySelector('#quit');
 
 
     const updateScreen = () => {
@@ -201,11 +206,7 @@ const ScreenController = () => {
                 boardDiv.appendChild(cellButton);
             })
         });
-
-        if(!initButton.classList.contains('invisible')){
-            initButton.classList.toggle('invisible');
-            boardDiv.style.display = 'grid';
-        }
+        
     }
 
     const clickHandlerBoard = (e) => {
@@ -216,7 +217,23 @@ const ScreenController = () => {
         updateScreen();
     }
 
+    const toggleDisplay = (target, trigger) => {
+        let defaultDisplay = window.getComputedStyle(target).getPropertyValue('display');
+        trigger.addEventListener('click', () => {
+            target.style.display = 
+            (target.style.display == 'none') ?
+            defaultDisplay :
+            'none';
+        });
+    }
 
+    toggleDisplay(startScreen, startButton);
+    toggleDisplay(mainScreen, startButton);
+    toggleDisplay(startScreen, quitButton);
+    toggleDisplay(mainScreen, quitButton);
+    document.addEventListener('DOMContentLoaded', () => {
+        mainScreen.style.display = 'none'
+    });
     startButton.addEventListener('click', updateScreen);
     boardDiv.addEventListener('click', clickHandlerBoard);
 };

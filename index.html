@@ -9,11 +9,30 @@
 <body>
     <h1 id="header">Tic Tac Toe</h1>
     <main id="main-content">
-        <div id="btn-container">
-            <button id="start">start</button>
+        <div id="start-screen">
+            <label for="round">How many rounds you want to play</label>
+            <input type="number" name="round" id="round" min="1" max="5">
+            <button id="start" class="btn">start</button>
         </div>
-        <div id="info"></div>
-        <div id="board-container"></div>
+        <div id="main-screen">
+            <div id="round-info">
+                <div class="round">Round:</div>
+                <div class="round-number"></div>
+            </div>
+            <div id="info"></div>
+            <div id="board-container"></div>
+            <div class="score-container">
+                <div id="player1-score-board" class="score-board">
+                    <div class="player-name">Player 1</div>
+                    <div class="player-score"></div>
+                </div>
+                <button id="quit" class="btn">Quit</button>
+                <div id="player2-score-board" class="score-board">
+                    <div class="player-name">Player 2</div>
+                    <div class="player-score"></div>
+                </div>
+            </div>
+        </div>
     </main>
     <script src="script.js"></script>
 </body>

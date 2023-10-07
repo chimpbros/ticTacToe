@@ -20,7 +20,7 @@
     align-items: center;
 }
 
-#btn-container {
+#start-screen {
     padding: 10px;
 }
 
@@ -45,4 +45,11 @@
 
 .invisible {
     display: none;
+}
+
+.score-container {
+    display: flex;
+    width: 50vmin;
+    justify-content: space-between;
+    margin-top: 10px;
 }

@@ -36,8 +36,10 @@ const GameBoard = (() => {
 
     const playersMove = (number, player) => {
         const cell = cellNumberArray.filter((item) => item.number === number)[0].cell;
-        if (cell.getValue() !== 0) return;
+        const cellValue = cell.getValue();
+        if (cellValue !== 0) return;
         cell.addMarker(player);
+        return true;
     }
 
     const printBoard = () => {
@@ -110,6 +112,7 @@ const GameController = (() => {
         activePlayers = activePlayers === players[0] ? players[1] : players[0];
     };
     const getActivePlayers = () => activePlayers;
+    const getWinner = () => winner;
 
     const printNewRound = () => {
         board.printBoard();
@@ -121,11 +124,17 @@ const GameController = (() => {
         players[1].filledCell = [];
     }
 
-    const playRound = (number) => {
-        console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
+    const isBoardFull = () => {
+        return board.getBoard().every((row) => row.every((cell) => cell.getValue() !== 0));
+    };
 
-        board.playersMove(number, getActivePlayers().marker);
-        getActivePlayers().filledCell.push(number);
+    const playRound = (number) => {
+        
+        const validMove = board.playersMove(number, getActivePlayers().marker);
+        if(validMove){
+            console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
+            getActivePlayers().filledCell.push(number);
+        }
         // check for winner goes here
         const checkWin = () => {
             const winCondition = [
@@ -144,10 +153,6 @@ const GameController = (() => {
             );
         }
 
-        const isBoardFull = () => {
-            return board.getBoard().every((row) => row.every((cell) => cell.getValue() !== 0));
-        };
-
         if(checkWin()){
             winner = getActivePlayers().name;
             console.log(`Congratulations ${getActivePlayers().name} Win!`);
@@ -158,21 +163,29 @@ const GameController = (() => {
 
         if(isBoardFull()){
             console.log(`It's a draw`);
-            board.resetBoard();
+            /* board.resetBoard(); */
             resetPlayer();
             return
         }
-        switchActivePlayers();
-        printNewRound();
+
+        if(validMove){
+            switchActivePlayers();
+            printNewRound();
+        }
+        
+        winner = null;
     }
 
+    
     printNewRound();
 
     return {
         playRound,
         getActivePlayers,
         getBoard: board.getBoard,
-        getCellNumber: board.getCellNumber
+        getCellNumber: board.getCellNumber,
+        getWinner,
+        isBoardFull
     }
 })();
 
@@ -194,7 +207,16 @@ const ScreenController = () => {
         const board = game.getBoard();
         const activePlayersName = game.getActivePlayers().name;
 
-        infoDiv.textContent = `${activePlayersName}'s turn...`;
+        if(game.getWinner()){
+            infoDiv.textContent = `Congratulations ${game.getWinner()} takes the round!`;
+        }
+        else if(game.isBoardFull()){
+            infoDiv.textContent = "it's tie!";
+        }
+        else {
+            infoDiv.textContent = `${activePlayersName}'s turn...`;
+        }
+        /* infoDiv.textContent = `${activePlayersName}'s turn...`; */
 
         board.forEach((row, rowIndex) => {
             row.forEach((cell, columnIndex) => {

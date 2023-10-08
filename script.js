@@ -92,18 +92,21 @@ const GameController = (() => {
     let playernOneName = 'player one';
     let playerTwoName = 'player two';
     let winner;
+    let round;
     const board = GameBoard;
 
     const players = [
         {
             name: playernOneName,
             marker: 1,
-            filledCell: []
+            filledCell: [],
+            score: 0
         },
         {
             name: playerTwoName,
             marker: 2,
-            filledCell: []
+            filledCell: [],
+            score: 0
         }
     ];
 
@@ -120,8 +123,10 @@ const GameController = (() => {
     }
 
     const resetPlayer = () => {
-        players[0].filledCell = [];
-        players[1].filledCell = [];
+        players.forEach((player) => {
+            player.filledCell = [];
+            player.score = 0
+        });
     }
 
     const isBoardFull = () => {
@@ -130,11 +135,6 @@ const GameController = (() => {
 
     const playRound = (number) => {
         
-        const validMove = board.playersMove(number, getActivePlayers().marker);
-        if(validMove){
-            console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
-            getActivePlayers().filledCell.push(number);
-        }
         // check for winner goes here
         const checkWin = () => {
             const winCondition = [
@@ -152,13 +152,21 @@ const GameController = (() => {
             combination.every((index) => getActivePlayers().filledCell.includes(index))
             );
         }
-
-        if(checkWin()){
-            winner = getActivePlayers().name;
-            console.log(`Congratulations ${getActivePlayers().name} Win!`);
-            board.resetBoard();
-            resetPlayer();
-            return
+        /* debugger */
+        if(!checkWin()){
+            const validMove = board.playersMove(number, getActivePlayers().marker);
+            if(validMove){
+                console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
+                getActivePlayers().filledCell.push(number);
+                if(checkWin()){
+                    winner = getActivePlayers().name;
+                    console.log(`Congratulations ${getActivePlayers().name} Win!`);
+                    /* resetPlayer(); */
+                    return
+                }
+                switchActivePlayers();
+                printNewRound();
+            }
         }
 
         if(isBoardFull()){
@@ -167,13 +175,8 @@ const GameController = (() => {
             resetPlayer();
             return
         }
-
-        if(validMove){
-            switchActivePlayers();
-            printNewRound();
-        }
         
-        winner = null;
+        /* winner = null; */
     }
 
     

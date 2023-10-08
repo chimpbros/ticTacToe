@@ -92,8 +92,11 @@ const GameController = (() => {
     let playernOneName = 'player one';
     let playerTwoName = 'player two';
     let winner;
-    let round;
+    let round = 1;
     const board = GameBoard;
+    const totalRound = document.querySelector('#round').value;
+
+    const getRound = () => round;
 
     const players = [
         {
@@ -125,7 +128,9 @@ const GameController = (() => {
     const resetPlayer = () => {
         players.forEach((player) => {
             player.filledCell = [];
-            player.score = 0
+            if(winner){
+                player.score = 0
+            }
         });
     }
 
@@ -161,6 +166,7 @@ const GameController = (() => {
                 if(checkWin()){
                     winner = getActivePlayers().name;
                     console.log(`Congratulations ${getActivePlayers().name} Win!`);
+                    activePlayers.score += 1;
                     /* resetPlayer(); */
                     return
                 }
@@ -172,11 +178,18 @@ const GameController = (() => {
         if(isBoardFull()){
             console.log(`It's a draw`);
             /* board.resetBoard(); */
-            resetPlayer();
+            /* resetPlayer(); */
             return
         }
         
         /* winner = null; */
+    }
+
+    const nextRound = () => {
+        round += 1;
+        resetPlayer();
+        board.resetBoard();
+        winner = null;
     }
 
     
@@ -188,30 +201,38 @@ const GameController = (() => {
         getBoard: board.getBoard,
         getCellNumber: board.getCellNumber,
         getWinner,
-        isBoardFull
+        isBoardFull,
+        nextRound,
+        getRound
     }
 })();
 
-const ScreenController = () => {
+function ScreenController () {
     const game = GameController;
     const infoDiv = document.querySelector('#info');
     const boardDiv = document.querySelector('#board-container');
     const startButton = document.querySelector('#start');
     const startScreen = document.querySelector('#start-screen');
-    const roundInfo = document.querySelector('#round-info');
+    const roundNumber = document.querySelector('.round-number');
     const scoreCtn = document.querySelector('.score-container');
     const mainScreen = document.querySelector('#main-screen');
     const quitButton = document.querySelector('#quit');
+    const nextRoundBtn = document.querySelector('#next-round');
 
+    
 
     const updateScreen = () => {
         boardDiv.textContent = '';
+        roundNumber.textContent = game.getRound();
 
         const board = game.getBoard();
         const activePlayersName = game.getActivePlayers().name;
+        nextRoundBtn.style.display = 'none';
+        
 
         if(game.getWinner()){
             infoDiv.textContent = `Congratulations ${game.getWinner()} takes the round!`;
+            nextRoundBtn.style.display = 'block';
         }
         else if(game.isBoardFull()){
             infoDiv.textContent = "it's tie!";
@@ -259,8 +280,13 @@ const ScreenController = () => {
     document.addEventListener('DOMContentLoaded', () => {
         mainScreen.style.display = 'none'
     });
+    nextRoundBtn.addEventListener('click', () => {
+        game.nextRound();
+        updateScreen()
+    });
     startButton.addEventListener('click', updateScreen);
     boardDiv.addEventListener('click', clickHandlerBoard);
+
 };
 
 ScreenController();

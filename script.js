@@ -92,9 +92,11 @@ const GameController = (() => {
     let playernOneName = 'player one';
     let playerTwoName = 'player two';
     let winner;
+    let gameWinner;
     let round = 1;
     const board = GameBoard;
-    const totalRound = document.querySelector('#round').value;
+    const getTotalRound = () => document.querySelector('#round').value;
+    
 
     const getRound = () => round;
 
@@ -119,6 +121,7 @@ const GameController = (() => {
     };
     const getActivePlayers = () => activePlayers;
     const getWinner = () => winner;
+    const getGameWinner = () => gameWinner;
 
     const printNewRound = () => {
         board.printBoard();
@@ -128,19 +131,25 @@ const GameController = (() => {
     const resetPlayer = () => {
         players.forEach((player) => {
             player.filledCell = [];
-            if(winner){
+            /* if(winner){
                 player.score = 0
-            }
+            } */
         });
     }
+
+    const getScore = (player) => player.score;
+    const player1Score = () => getScore(players[0]);
+    const player2Score = () => getScore(players[1]);
 
     const isBoardFull = () => {
         return board.getBoard().every((row) => row.every((cell) => cell.getValue() !== 0));
     };
 
     const playRound = (number) => {
-        
-        // check for winner goes here
+        const totalRound = getTotalRound()
+
+        if(round <= parseInt(totalRound)){
+            // check for winner goes here
         const checkWin = () => {
             const winCondition = [
                 [1,2,3],
@@ -168,6 +177,21 @@ const GameController = (() => {
                     console.log(`Congratulations ${getActivePlayers().name} Win!`);
                     activePlayers.score += 1;
                     /* resetPlayer(); */
+                    if(round == parseInt(totalRound)) {
+                        if(player1Score() > player2Score()){
+                            console.log('p1 win');
+                            gameWinner = players[0].name;
+                        }
+                        else if(player1Score() < player2Score()){
+                            console.log('p2 win');
+                            gameWinner = players[1].name;
+                        }
+                        else{
+                            gameWinner = 'none';
+                            console.log('tie');
+                        }
+                        return
+                    }
                     return
                 }
                 switchActivePlayers();
@@ -183,13 +207,28 @@ const GameController = (() => {
         }
         
         /* winner = null; */
+        }
+        
+        
+    }
+
+    const resetGame = () => {
+        resetPlayer();
+        board.resetBoard();
+        gameWinner = null;
+        winner = null;
+        round = 1;
+        players.forEach((player) => {player.score = 0;});
     }
 
     const nextRound = () => {
-        round += 1;
-        resetPlayer();
-        board.resetBoard();
-        winner = null;
+        /* debugger */
+        if(round < getTotalRound()){
+            round += 1;
+            resetPlayer();
+            board.resetBoard();
+            winner = null;
+        }
     }
 
     
@@ -201,9 +240,13 @@ const GameController = (() => {
         getBoard: board.getBoard,
         getCellNumber: board.getCellNumber,
         getWinner,
+        getGameWinner,
         isBoardFull,
         nextRound,
-        getRound
+        getRound,
+        player1Score,
+        player2Score,
+        resetGame
     }
 })();
 
@@ -214,16 +257,18 @@ function ScreenController () {
     const startButton = document.querySelector('#start');
     const startScreen = document.querySelector('#start-screen');
     const roundNumber = document.querySelector('.round-number');
-    const scoreCtn = document.querySelector('.score-container');
     const mainScreen = document.querySelector('#main-screen');
     const quitButton = document.querySelector('#quit');
     const nextRoundBtn = document.querySelector('#next-round');
+    const player1ScoreDiv = document.querySelector('#player1-score');
+    const player2ScoreDiv = document.querySelector('#player2-score');
 
     
-
     const updateScreen = () => {
         boardDiv.textContent = '';
         roundNumber.textContent = game.getRound();
+        player1ScoreDiv.textContent = game.player1Score();
+        player2ScoreDiv.textContent = game.player2Score();
 
         const board = game.getBoard();
         const activePlayersName = game.getActivePlayers().name;
@@ -236,9 +281,20 @@ function ScreenController () {
         }
         else if(game.isBoardFull()){
             infoDiv.textContent = "it's tie!";
+            nextRoundBtn.style.display = 'block';
         }
         else {
             infoDiv.textContent = `${activePlayersName}'s turn...`;
+        }
+
+        if(game.getGameWinner()){
+            if(game.getGameWinner() == 'none'){
+                infoDiv.textContent = `It's tie!`
+            }
+            else{
+                infoDiv.textContent = `${game.getGameWinner()} win the game!`;
+            }
+            nextRoundBtn.style.display = 'none';
         }
         /* infoDiv.textContent = `${activePlayersName}'s turn...`; */
 
@@ -286,6 +342,8 @@ function ScreenController () {
     });
     startButton.addEventListener('click', updateScreen);
     boardDiv.addEventListener('click', clickHandlerBoard);
+    quitButton.addEventListener('click', game.resetGame);
+    
 
 };
 

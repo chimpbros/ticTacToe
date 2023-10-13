@@ -89,8 +89,8 @@ const Player = (name, marker) => {
 };
 
 const GameController = (() => {
-    let playernOneName = 'player one';
-    let playerTwoName = 'player two';
+    let playernOneName = 'player O';
+    let playerTwoName = 'player X';
     let winner;
     let gameWinner;
     let round = 1;
@@ -304,7 +304,22 @@ function ScreenController () {
                 cellButton.classList.add('cell');
 
                 cellButton.dataset.number = game.getCellNumber(rowIndex, columnIndex);
-                cellButton.textContent = cell.getValue();
+                cellButton.dataset.turn = 
+                (game.getActivePlayers().marker === 1) ?
+                'turn-o' :
+                'turn-x';
+                /* cellButton.textContent = cell.getValue(); */
+                if(cell.getValue() === 1){
+                    cellButton.dataset.fieldState = 'set-o';
+                    cellButton.removeAttribute('data-turn');
+                }
+                else if(cell.getValue() === 2){
+                    cellButton.dataset.fieldState = 'set-x';
+                    cellButton.removeAttribute('data-turn');
+                }
+                else if(game.getWinner()){
+                    cellButton.removeAttribute('data-turn');
+                }
                 boardDiv.appendChild(cellButton);
             })
         });

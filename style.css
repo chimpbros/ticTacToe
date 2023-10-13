@@ -41,6 +41,9 @@
     justify-content: center;
     align-items: center;
     border: var(--black-border);
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .invisible {
@@ -53,3 +56,37 @@
     justify-content: space-between;
     margin-top: 10px;
 }
+
+[data-field-state='set-x'] {
+    background-image: url(/asset/X-marker.svg);
+}
+
+[data-field-state='set-o'] {
+    background-image: url(/asset/O-marker.svg);
+}
+
+[data-turn]:hover::before {
+    content: "";
+    opacity: 0.5;
+    background-size: 80%;
+    height: calc(50vmin/3);
+    width: calc(50vmin/3);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+[data-turn='turn-o']:hover::before {
+    background-image: url(/asset/O-marker.svg);
+}
+
+[data-turn='turn-x']:hover::before {
+    background-image: url(/asset/X-marker.svg);
+}
+
+/* .cell::before {
+    content: "";
+    background-color: aqua;
+    position: absolute;
+    height: 10px;
+    width: 10px;
+} */

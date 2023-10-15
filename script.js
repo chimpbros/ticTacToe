@@ -365,7 +365,7 @@ function ScreenController () {
         if(totalRound <= 5){
             updateScreen();
             startScreen.style.display = 'none';
-            mainScreen.style.display = 'block';
+            mainScreen.style.display = 'flex';
         }
         else{
             alertDiv.style.display = 'block';

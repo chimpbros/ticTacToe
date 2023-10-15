@@ -95,7 +95,11 @@ const GameController = (() => {
     let gameWinner;
     let round = 1;
     const board = GameBoard;
-    const getTotalRound = () => document.querySelector('#round').value;
+    const getTotalRound = () => {
+        const totalRound = document.querySelector('#round').value;
+        if(totalRound > 5) return;
+        return totalRound;
+    }
     
 
     const getRound = () => round;
@@ -167,44 +171,44 @@ const GameController = (() => {
             );
         }
         /* debugger */
-        if(!checkWin()){
-            const validMove = board.playersMove(number, getActivePlayers().marker);
-            if(validMove){
-                console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
-                getActivePlayers().filledCell.push(number);
-                if(checkWin()){
-                    winner = getActivePlayers().name;
-                    console.log(`Congratulations ${getActivePlayers().name} Win!`);
-                    activePlayers.score += 1;
-                    /* resetPlayer(); */
-                    if(round == parseInt(totalRound)) {
-                        if(player1Score() > player2Score()){
-                            console.log('p1 win');
-                            gameWinner = players[0].name;
-                        }
-                        else if(player1Score() < player2Score()){
-                            console.log('p2 win');
-                            gameWinner = players[1].name;
-                        }
-                        else{
-                            gameWinner = 'none';
-                            console.log('tie');
+            if(!checkWin()){
+                const validMove = board.playersMove(number, getActivePlayers().marker);
+                if(validMove){
+                    console.log(`adding ${getActivePlayers().name}'s marker into cell ${number}`);
+                    getActivePlayers().filledCell.push(number);
+                    if(checkWin()){
+                        winner = getActivePlayers().name;
+                        console.log(`Congratulations ${getActivePlayers().name} Win!`);
+                        activePlayers.score += 1;
+                        /* resetPlayer(); */
+                        if(round == parseInt(totalRound)) {
+                            if(player1Score() > player2Score()){
+                                console.log('p1 win');
+                                gameWinner = players[0].name;
+                            }
+                            else if(player1Score() < player2Score()){
+                                console.log('p2 win');
+                                gameWinner = players[1].name;
+                            }
+                            else{
+                                gameWinner = 'none';
+                                console.log('tie');
+                            }
+                            return
                         }
                         return
                     }
-                    return
-                }
                 switchActivePlayers();
                 printNewRound();
+                }
             }
-        }
 
-        if(isBoardFull()){
-            console.log(`It's a draw`);
-            /* board.resetBoard(); */
-            /* resetPlayer(); */
-            return
-        }
+            if(isBoardFull()){
+                console.log(`It's a draw`);
+                /* board.resetBoard(); */
+                /* resetPlayer(); */
+                return
+            }
         
         /* winner = null; */
         }
@@ -262,7 +266,7 @@ function ScreenController () {
     const nextRoundBtn = document.querySelector('#next-round');
     const player1ScoreDiv = document.querySelector('#player1-score');
     const player2ScoreDiv = document.querySelector('#player2-score');
-
+    const alertDiv = document.querySelector('#alert');
     
     const updateScreen = () => {
         boardDiv.textContent = '';
@@ -343,9 +347,9 @@ function ScreenController () {
             'none';
         });
     }
-
-    toggleDisplay(startScreen, startButton);
-    toggleDisplay(mainScreen, startButton);
+    
+    /* toggleDisplay(startScreen, startButton);
+    toggleDisplay(mainScreen, startButton); */
     toggleDisplay(startScreen, quitButton);
     toggleDisplay(mainScreen, quitButton);
     document.addEventListener('DOMContentLoaded', () => {
@@ -355,9 +359,23 @@ function ScreenController () {
         game.nextRound();
         updateScreen()
     });
-    startButton.addEventListener('click', updateScreen);
+    
+    startButton.addEventListener('click', () => {
+        const totalRound = parseInt(document.querySelector('#round').value);
+        if(totalRound <= 5){
+            updateScreen();
+            startScreen.style.display = 'none';
+            mainScreen.style.display = 'block';
+        }
+        else{
+            alertDiv.style.display = 'block';
+        }
+    });
     boardDiv.addEventListener('click', clickHandlerBoard);
-    quitButton.addEventListener('click', game.resetGame);
+    quitButton.addEventListener('click', () => {
+        game.resetGame();
+        alertDiv.style.display = 'none';
+    });
     
 
 };
